@@ -1,8 +1,18 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import React, { useEffect } from 'react';
+import { View, Text, StyleSheet, Animated } from 'react-native';
 
 const Ball = () => {
-  return <View style={styles.ball} />;
+  const position = new Animated.ValueXY(0, 0); //start value
+
+  useEffect(() => {
+    Animated.spring(position, { toValue: { x: 200, y: 500 } }).start();
+  }, []);
+
+  return (
+    <Animated.View style={position.getLayout()}>
+      <View style={styles.ball} />
+    </Animated.View>
+  );
 };
 
 const styles = StyleSheet.create({

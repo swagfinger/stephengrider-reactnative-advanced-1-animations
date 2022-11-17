@@ -43,17 +43,45 @@ npx create-expo-app --template
 - Animated.Types
 - Animated.Components
 
+### Animating
+
+- animation happens outside the render() of react, <Animated> has its own animation timeline not nsync with render()
+
+1. ValueXY - 'position' = anypoint in time {x:0, y:0}
+
+```js
+const position = new Animated.ValueXY(0, 0); //start value
+```
+
+2. Animated.spring animates - do an animation by moving 'position' (doesnt say what we moving)
+
+```js
+useEffect(() => {
+  Animated.spring(position, { toValue: { x: 200, y: 500 } }).start();
+}, []);
+```
+
+3. <Animated.View> asigns via 'style' a position.getLayout(),
+
+```js
+return (
+  <Animated.View style={position.getLayout()}>
+    <View style={styles.ball} />
+  </Animated.View>
+);
+```
+
 ```js
 import { Animated } from 'react-animation';
 
 Animated.Value.Value;
-Animated.Value.ValueXY;
+Animated.Value.ValueXY; //'position' = anypoint in time {x:0, y:0}
 
-Animated.Types.Spring;
+Animated.Types.Spring; //do an animation by moving 'position' (doesnt say what we moving)
 Animated.Types.Decay;
 Animated.Types.Timing;
 
-Animated.Components.View;
+Animated.Components.View; // thing we want to animate - use style={} asign an animation by style={position.getLayout()}
 Animated.Components.Text;
 Animated.Components.Image;
 ```
