@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { PanResponder, Animated } from 'react-native';
+import { PanResponder, Animated, View } from 'react-native';
 
 const Deck = ({ renderCard, data }) => {
   //OPTIMIZATION: useRef so same reference on re-render
@@ -36,16 +36,24 @@ const Deck = ({ renderCard, data }) => {
   ).current;
 
   const renderCards = () => {
-    return data.map((item) => {
+    return data.map((item, index) => {
+      if (index === 0) {
+        return (
+          <Animated.View
+            key={item.id}
+            style={position.getLayout()}
+            {...panResponder.panHandlers}
+          >
+            {renderCard(item)}
+          </Animated.View>
+        );
+      }
+
       return renderCard(item);
     });
   };
 
-  return (
-    <Animated.View style={position.getLayout()} {...panResponder.panHandlers}>
-      {renderCards()}
-    </Animated.View>
-  );
+  return <View>{renderCards()}</View>;
 };
 
 export default Deck;
