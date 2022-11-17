@@ -1,5 +1,8 @@
 import React, { useRef } from 'react';
-import { PanResponder, Animated, View } from 'react-native';
+import { PanResponder, Animated, View, Dimensions } from 'react-native';
+
+const SCREEN_WIDTH = Dimensions.get('window').width;
+const SCALE = 1.5;
 
 const Deck = ({ renderCard, data }) => {
   //OPTIMIZATION: useRef so same reference on re-render
@@ -31,9 +34,29 @@ const Deck = ({ renderCard, data }) => {
       //when user stops dragging/releases button
       onPanResponderRelease: () => {
         // pan.flattenOffset();
+        resetPosition();
       }
     })
   ).current;
+
+  function getCardStyle() {
+    //interpolates goal is to tie input (x) with output (rotation)
+    //association of one scale, with another scale: input vs output
+    //Dimensions gets dimensions of screen
+    const rotate = position.x.interpolate({
+      inputRange: [-SCREEN_WIDTH * SCALE, 0, SCREEN_WIDTH * SCALE],
+      outputRange: ['-120deg', '0deg', '120deg']
+    });
+
+    return {
+      ...position.getLayout(),
+      transform: [{ rotate }]
+    };
+  }
+
+  function resetPosition() {
+    Animated.spring(position, { toValue: { x: 0, y: 0 } }).start();
+  }
 
   const renderCards = () => {
     return data.map((item, index) => {
@@ -41,7 +64,7 @@ const Deck = ({ renderCard, data }) => {
         return (
           <Animated.View
             key={item.id}
-            style={position.getLayout()}
+            style={getCardStyle()}
             {...panResponder.panHandlers}
           >
             {renderCard(item)}
