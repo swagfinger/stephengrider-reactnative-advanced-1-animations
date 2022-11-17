@@ -1,5 +1,12 @@
-import React, { useRef, useState } from 'react';
-import { PanResponder, Animated, View, Dimensions } from 'react-native';
+import React, { useRef, useState, useEffect } from 'react';
+import {
+  PanResponder,
+  Animated,
+  View,
+  Dimensions,
+  LayoutAnimation,
+  UIManager
+} from 'react-native';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SCALE = 1.5;
@@ -13,8 +20,23 @@ const Deck = ({
   onSwipeRight = () => {},
   renderNoMoreCards = () => {}
 }) => {
+  useEffect(() => {
+    if (
+      Platform.OS === 'android' &&
+      UIManager.setLayoutAnimationEnabledExperimental
+    ) {
+      UIManager.setLayoutAnimationEnabledExperimental(true);
+      LayoutAnimation.spring();
+    }
+  });
+
   //track card index
   const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    setIndex(0);
+  }, [data]);
+
   console.log('index: ', index);
   //OPTIMIZATION: useRef so same reference on re-render
   const position = useRef(new Animated.ValueXY()).current;
@@ -104,27 +126,43 @@ const Deck = ({
       return renderNoMoreCards();
     }
 
-    return data.map((item, i) => {
-      if (i < index) {
-        return null;
-      }
-      if (index === i) {
+    return data
+      .map((item, i) => {
+        if (i < index) {
+          return null;
+        }
+        if (index === i) {
+          return (
+            <Animated.View
+              key={item.id}
+              style={[getCardStyle(), styles.cardStyle]}
+              {...panResponder.panHandlers}
+            >
+              {renderCard(item)}
+            </Animated.View>
+          );
+        }
+
         return (
           <Animated.View
             key={item.id}
-            style={getCardStyle()}
-            {...panResponder.panHandlers}
+            style={[styles.cardStyle, { top: 10 * (i - index) }]}
           >
             {renderCard(item)}
           </Animated.View>
         );
-      }
-
-      return renderCard(item);
-    });
+      })
+      .reverse();
   };
 
   return <View>{renderCards()}</View>;
+};
+
+const styles = {
+  cardStyle: {
+    position: 'absolute',
+    width: SCREEN_WIDTH
+  }
 };
 
 export default Deck;
