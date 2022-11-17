@@ -3,6 +3,8 @@ import { PanResponder, Animated, View, Dimensions } from 'react-native';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SCALE = 1.5;
+const SWIPE_THRESHOLD = SCREEN_WIDTH * 0.25; //distance card needs to be dragged
+const SWIPEOUT_DURATION = 250; //milliseconds
 
 const Deck = ({ renderCard, data }) => {
   //OPTIMIZATION: useRef so same reference on re-render
@@ -32,9 +34,16 @@ const Deck = ({ renderCard, data }) => {
       },
 
       //when user stops dragging/releases button
-      onPanResponderRelease: () => {
-        // pan.flattenOffset();
-        resetPosition();
+      onPanResponderRelease: (event, gesture) => {
+        if (gesture.dx > SWIPE_THRESHOLD) {
+          console.log('swipe RIGHT');
+          forceSwipe('right');
+        } else if (gesture.dx < -SWIPE_THRESHOLD) {
+          console.log('swipe LEFT');
+          forceSwipe('left');
+        } else {
+          resetPosition();
+        }
       }
     })
   ).current;
@@ -53,6 +62,15 @@ const Deck = ({ renderCard, data }) => {
       transform: [{ rotate }]
     };
   }
+
+  const forceSwipe = (direction) => {
+    const x = direction === 'right' ? SCREEN_WIDTH : -SCREEN_WIDTH;
+    //duration is millisec
+    Animated.timing(position, {
+      toValue: { x, y: 0 },
+      duration: SWIPEOUT_DURATION
+    }).start();
+  };
 
   function resetPosition() {
     Animated.spring(position, { toValue: { x: 0, y: 0 } }).start();
