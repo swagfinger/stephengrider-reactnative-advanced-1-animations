@@ -29,3 +29,31 @@ NOTE: expo cli recommends using below instead of 'expo init'
 ```cmd
 npx create-expo-app --template
 ```
+
+# Animations by making a Tinder Like Project
+
+## ReactNative animation systems
+
+- Animated (can make more complex animations)
+- LayoutAnimation (simple animation)
+
+## Animated properties
+
+- Animated.Value
+- Animated.Types
+- Animated.Components
+
+```js
+import { Animated } from 'react-animation';
+
+Animated.Value.Value;
+Animated.Value.ValueXY;
+
+Animated.Types.Spring;
+Animated.Types.Decay;
+Animated.Types.Timing;
+
+Animated.Components.View;
+Animated.Components.Text;
+Animated.Components.Image;
+```
