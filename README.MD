@@ -91,3 +91,15 @@ Animated.Components.Image;
 ### PanResponder - https://reactnative.dev/docs/panresponder.html
 
 why useRef? - useRef will give you the same ref object on every render.
+
+## defaultProps vs default parameters
+
+defaultProps will be deprecated (or is already deprecated), use default parameters
+
+## updating index with setIndex
+
+- dont forget to use previous state value to update state
+
+```js
+setIndex((oldIndex) => oldIndex + 1);
+```
