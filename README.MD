@@ -85,3 +85,9 @@ Animated.Components.View; // thing we want to animate - use style={} asign an an
 Animated.Components.Text;
 Animated.Components.Image;
 ```
+
+## Gesture
+
+### PanResponder - https://reactnative.dev/docs/panresponder.html
+
+why useRef? - useRef will give you the same ref object on every render.

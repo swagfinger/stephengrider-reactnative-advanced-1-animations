@@ -1,6 +1,7 @@
+import React from 'react';
 import { StyleSheet, View, Image } from 'react-native';
-import Deck from './src/Deck';
 import { Card, Button, Text } from '@rneui/themed';
+import Deck from './src/Deck';
 
 // https://jsonplaceholder.typicode.com/photos?_start=0&_limit=10
 const DATA = [
@@ -50,6 +51,7 @@ export default function App() {
   };
 
   return (
+    //giving panHandlers to the view
     <View style={styles.container}>
       <Deck data={DATA} renderCard={renderCard} />
     </View>
