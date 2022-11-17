@@ -50,10 +50,23 @@ export default function App() {
     );
   };
 
+  const renderNoMoreCards = () => {
+    return (
+      <Card title="All done">
+        <Text style={{ marginBottom: 10 }}>Theres no more cards</Text>
+        <Button title="get more" backgroundColor="blue" />
+      </Card>
+    );
+  };
+
   return (
     //giving panHandlers to the view
     <View style={styles.container}>
-      <Deck data={DATA} renderCard={renderCard} />
+      <Deck
+        data={DATA}
+        renderCard={renderCard}
+        renderNoMoreCards={renderNoMoreCards}
+      />
     </View>
   );
 }

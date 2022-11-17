@@ -10,7 +10,8 @@ const Deck = ({
   renderCard,
   data,
   onSwipeLeft = () => {},
-  onSwipeRight = () => {}
+  onSwipeRight = () => {},
+  renderNoMoreCards = () => {}
 }) => {
   //track card index
   const [index, setIndex] = useState(0);
@@ -98,6 +99,11 @@ const Deck = ({
   };
 
   const renderCards = () => {
+    //if index is greater than data.length
+    if (index >= data.length) {
+      return renderNoMoreCards();
+    }
+
     return data.map((item, i) => {
       if (i < index) {
         return null;
