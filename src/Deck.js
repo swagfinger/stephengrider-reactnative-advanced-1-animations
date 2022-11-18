@@ -1,12 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
-import {
-  PanResponder,
-  Animated,
-  View,
-  Dimensions,
-  LayoutAnimation,
-  UIManager
-} from 'react-native';
+import { PanResponder, Animated, View, Dimensions } from 'react-native';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SCALE = 1.5;
@@ -20,19 +13,10 @@ const Deck = ({
   onSwipeRight = () => {},
   renderNoMoreCards = () => {}
 }) => {
-  useEffect(() => {
-    if (
-      Platform.OS === 'android' &&
-      UIManager.setLayoutAnimationEnabledExperimental
-    ) {
-      UIManager.setLayoutAnimationEnabledExperimental(true);
-      LayoutAnimation.spring();
-    }
-  });
-
   //track card index
   const [index, setIndex] = useState(0);
 
+  //call when new data resets with new data...
   useEffect(() => {
     setIndex(0);
   }, [data]);
@@ -40,6 +24,9 @@ const Deck = ({
   console.log('index: ', index);
   //OPTIMIZATION: useRef so same reference on re-render
   const position = useRef(new Animated.ValueXY()).current;
+
+  // used to animate smooth transition of the rest of the deck
+  const position2 = useRef(new Animated.ValueXY()).current;
 
   const panResponder = useRef(
     PanResponder.create({
@@ -106,10 +93,18 @@ const Deck = ({
 
     direction === 'right' ? onSwipeRight(item) : onSwipeLeft(item);
 
-    position.setValue({ x: 0, y: 0 });
+    Animated.timing(position2, {
+      toValue: { x: 0, y: -10 },
+      useNativeDriver: false,
+      duration: 300
+    }).start(() => {
+      // we update state (rerender page) ONLY after the animation is finished
+      position.setValue({ x: 0, y: 0 });
+      position2.setValue({ x: 0, y: 0 });
 
-    setIndex((prev) => {
-      return prev + 1;
+      setIndex((prev) => {
+        return prev + 1;
+      });
     });
   };
 
@@ -155,7 +150,9 @@ const Deck = ({
       .reverse();
   };
 
-  return <View>{renderCards()}</View>;
+  return (
+    <Animated.View style={position2.getLayout()}>{renderCards()}</Animated.View>
+  );
 };
 
 const styles = {
